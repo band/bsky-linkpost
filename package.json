@@ -1,0 +1,16 @@
+{
+  "name": "bsky-linkpost",
+  "version": "1.0.0",
+  "description": "Simple Electron app for posting links to Bluesky",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "dependencies": {
+    "@atproto/api": "^0.12.29",
+    "electron": "^27.0.0"
+  },
+  "author": "anderbill",
+  "license": "MIT"
+}
