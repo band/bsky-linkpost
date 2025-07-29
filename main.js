@@ -64,6 +64,10 @@ ipcMain.handle('post', async (event, { text, url }) => {
       const descMatch = html.match(/<meta name="description" content="(.*?)"/i);
       const description = descMatch ? descMatch[1].trim() : '';
 
+      const fsPathMatch = html.match(/<meta name="fs_path" content="(.*?)"/i)
+      const filePath = fsPathMatch ? fsPathMatch[1].trim() : '';
+      console.log(`filepath <meta> element: ${filePath}`)
+
       embed = {
         $type: 'app.bsky.embed.external',
         external: {
