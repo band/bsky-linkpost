@@ -64,7 +64,7 @@ postBtn.addEventListener('click', async () => {
     
     try {
         const result = await window.electronAPI.post({ text, url });
-        
+        console.log(result)
         if (result.success) {
             showStatus(postStatus, 'Post published successfully!');
             document.getElementById('postText').value = '';

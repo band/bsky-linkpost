@@ -17,6 +17,8 @@ function createWindow() {
   });
 
   mainWindow.loadFile('index.html');
+  // open DevTools
+  mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);
@@ -85,7 +87,10 @@ ipcMain.handle('post', async (event, { text, url }) => {
       post.embed = embed;
     }
 
-    await bskyAgent.post(post);
+    const bsPostResponse = await bskyAgent.post(post);
+    console.log(`bskyAgent.post reponse: ${Object.entries(bsPostResponse)}`)
+    const uriValue = Object.entries(bsPostResponse).find(([key]) => key === "uri")[1];
+    console.log(`bskyAgent.post uri: ${uriValue}`);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
