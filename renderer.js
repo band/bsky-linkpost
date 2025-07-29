@@ -64,11 +64,16 @@ postBtn.addEventListener('click', async () => {
     
     try {
         const result = await window.electronAPI.post({ text, url });
-        console.log(result)
+        console.log(`electronAPI.post result: ${Object.entries(result)}`)
         if (result.success) {
             showStatus(postStatus, 'Post published successfully!');
             document.getElementById('postText').value = '';
             document.getElementById('url').value = '';
+	  //  console.log(`bsky post at-uri: ${result.post_uri}`)
+	  //  console.log(`bluesky handle: ${document.getElementById('handle').value.trim()}`)
+	    bsky_handle = `bluesky handle: ${document.getElementById('handle').value.trim()}`
+	    const bsky_post_url = result.post_uri.replace(/at:.*\.post/,`bsky.app/profile/${bsky_handle}/post')
+	    console.log(`bluesky post URL: ${bsky_post_url}`)
         } else {
             showStatus(postStatus, `Post failed: ${result.error}`, true);
         }

@@ -7,7 +7,7 @@ let bskyAgent;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 1200,
     height: 600,
     webPreferences: {
       nodeIntegration: false,
@@ -90,8 +90,8 @@ ipcMain.handle('post', async (event, { text, url }) => {
     const bsPostResponse = await bskyAgent.post(post);
     console.log(`bskyAgent.post reponse: ${Object.entries(bsPostResponse)}`)
     const uriValue = Object.entries(bsPostResponse).find(([key]) => key === "uri")[1];
-    console.log(`bskyAgent.post uri: ${uriValue}`);
-    return { success: true };
+//    console.log(`bskyAgent.post uri: ${uriValue}`);
+    return { success: true, post_uri: uriValue };
   } catch (error) {
     return { success: false, error: error.message };
   }
