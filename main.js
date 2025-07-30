@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { BskyAgent } = require('@atproto/api');
+const fs = require('fs');
 
 let mainWindow;
 let bskyAgent;
@@ -53,6 +54,7 @@ ipcMain.handle('post', async (event, { text, url }) => {
   try {
     let postText = text;
     let embed = null;
+    let filePath = '';
 
     if (url) {
       const urlResponse = await fetch(url);
@@ -65,7 +67,7 @@ ipcMain.handle('post', async (event, { text, url }) => {
       const description = descMatch ? descMatch[1].trim() : '';
 
       const fsPathMatch = html.match(/<meta name="fs_path" content="(.*?)"/i)
-      const filePath = fsPathMatch ? fsPathMatch[1].trim() : '';
+      filePath = fsPathMatch ? fsPathMatch[1].trim() : '';
       console.log(`filepath <meta> element: ${filePath}`)
 
       embed = {
@@ -94,8 +96,28 @@ ipcMain.handle('post', async (event, { text, url }) => {
     const bsPostResponse = await bskyAgent.post(post);
     console.log(`bskyAgent.post reponse: ${Object.entries(bsPostResponse)}`)
     const uriValue = Object.entries(bsPostResponse).find(([key]) => key === "uri")[1];
-//    console.log(`bskyAgent.post uri: ${uriValue}`);
-    return { success: true, post_uri: uriValue };
+
+    // New: Check if filePath exists on local filesystem
+    let localFileExists = false;
+    let localFilePath = '';
+    if (filePath) {
+      console.log(`<meta> filePath: ${filePath}`)
+      try {
+        if (fs.existsSync(filePath)) {
+          localFileExists = true;
+          localFilePath = filePath;
+        }
+      } catch (err) {
+        // Ignore errors, just don't set localFileExists
+      }
+    }
+
+    return { 
+      success: true, 
+      post_uri: uriValue, 
+      local_file_found: localFileExists, 
+      local_file_path: localFilePath 
+    };
   } catch (error) {
     return { success: false, error: error.message };
   }
